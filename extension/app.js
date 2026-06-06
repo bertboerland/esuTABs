@@ -287,12 +287,19 @@
       const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
     });
 
-    const todayFact = todayHistoryFact(history);
-    renderFact(todayFact || pickRandom(facts) || {
+    renderFact(pickRandom(facts) || {
       title: 'No knowledge loaded',
       description: 'Add facts to data/facts.json or configure a GitHub source.',
       category: 'esuTABs'
     });
+
+    const otd = todayHistoryFact(history);
+    const card = $('onThisDayCard');
+    if (otd && card) {
+      $('otdTitle').textContent = otd.title;
+      $('otdDesc').textContent = otd.description;
+      card.hidden = false;
+    }
 
     loadRss();
   })();
