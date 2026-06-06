@@ -210,7 +210,7 @@
       const meta = document.createElement('small');
       meta.textContent = f.category || '';
       el.appendChild(title); el.appendChild(meta);
-      el.addEventListener('click', () => { renderFact(f); searchPanel.hidden = true; });
+      el.addEventListener('click', () => { renderFact(f); });
       root.appendChild(el);
     }
   }
