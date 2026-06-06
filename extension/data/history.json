@@ -1,0 +1,11 @@
+[
+  { "date": "01-09", "title": "First iPhone announced (2007)", "description": "Steve Jobs unveiled the iPhone, reshaping mobile computing — and accelerating Linux-based Android as the open counterpart." },
+  { "date": "02-01", "title": "Mozilla 1.0 milestone", "description": "The Mozilla project, born from Netscape's open-sourcing in 1998, gave the world Firefox and a renewed open Web." },
+  { "date": "03-14", "title": "Pi Day and Free Software", "description": "A day to celebrate math — and the free software that computes it. Many GNU tools were first packaged on early Linux distributions in March." },
+  { "date": "05-01", "title": "Kubernetes 1.0 era", "description": "May has seen multiple KubeCon EU editions shaping the cloud native ecosystem around open standards." },
+  { "date": "06-07", "title": "openSUSE community day", "description": "openSUSE contributors around the world gather in June to coordinate releases of Leap and Tumbleweed." },
+  { "date": "08-25", "title": "Linus posts about Linux (1991)", "description": "Linus Torvalds posts to comp.os.minix announcing his free operating system project — the birth of Linux." },
+  { "date": "09-27", "title": "GNU Project announced (1983)", "description": "Richard Stallman announces the GNU Project, the foundation of the free software movement." },
+  { "date": "11-01", "title": "SUSE founding month (1992)", "description": "SUSE was founded in Germany in 1992, becoming the oldest existing commercial Linux company." },
+  { "date": "12-25", "title": "Open source winter releases", "description": "Many maintainers tag year-end releases — a gift of code to the community." }
+]
