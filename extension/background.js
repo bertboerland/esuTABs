@@ -28,14 +28,15 @@ const GITHUB_RAW = {
 
 chrome.runtime.onInstalled.addListener(async () => {
   chrome.alarms.create(RSS_ALARM, { delayInMinutes: 1, periodInMinutes: 60 });
-  chrome.alarms.create(GH_ALARM, { delayInMinutes: 2, periodInMinutes: 360 });
+  // Sync facts + history from GitHub once a day so content can be updated remotely
+  chrome.alarms.create(GH_ALARM, { delayInMinutes: 2, periodInMinutes: 1440 });
   await refreshRss().catch(() => {});
   await syncGithub().catch(() => {});
 });
 
 chrome.runtime.onStartup.addListener(() => {
   chrome.alarms.create(RSS_ALARM, { delayInMinutes: 1, periodInMinutes: 60 });
-  chrome.alarms.create(GH_ALARM, { delayInMinutes: 2, periodInMinutes: 360 });
+  chrome.alarms.create(GH_ALARM, { delayInMinutes: 2, periodInMinutes: 1440 });
 });
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
