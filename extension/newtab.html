@@ -5,18 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>esuTABs — New Tab</title>
 <link rel="stylesheet" href="styles.css" />
-<script>
-  (function () {
-    try {
-      const stored = localStorage.getItem('esutabs.theme') || 'system';
-      const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      const mode = stored === 'system' ? sys : stored;
-      document.documentElement.dataset.theme = mode;
-      document.documentElement.dataset.themePref = stored;
-    } catch (e) {}
-  })();
-</script>
+<script src="theme-init.js"></script>
 </head>
+
 <body>
   <div class="app">
     <header class="sysbar" role="banner">
