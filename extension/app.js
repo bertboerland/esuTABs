@@ -71,13 +71,11 @@
     factDesc: $('factDesc'),
     factCategory: $('factCategory'),
     factSource: $('factSource'),
-    favBtn: $('favBtn'),
   };
 
   // ---------- State ----------
   const state = {
     facts: [],
-    favorites: new Set(),
     currentFact: null,
     categories: new Set(),
   };
@@ -155,7 +153,7 @@
 
   function renderFact(fact) {
     if (!fact) return;
-    const { factTitle: t, factDesc: d, factCategory: c, factSource: s, favBtn: f } = dom;
+    const { factTitle: t, factDesc: d, factCategory: c, factSource: s } = dom;
     [t,d].forEach(el => el.classList.add('fading'));
     setTimeout(() => {
       t.textContent = fact.title;
@@ -163,11 +161,6 @@
       c.textContent = fact.category || 'Knowledge';
       const safeSrc = typeof fact.source_url === 'string' && /^https:\/\//i.test(fact.source_url);
       if (safeSrc) { s.href = fact.source_url; s.hidden = false; } else { s.hidden = true; s.removeAttribute('href'); }
-      const key = factKey(fact);
-      const isFav = state.favorites.has(key);
-      f.classList.toggle('active', isFav);
-      f.textContent = isFav ? '♥' : '♡';
-      f.setAttribute('aria-pressed', isFav ? 'true' : 'false');
       state.currentFact = fact;
       [t,d].forEach(el => el.classList.remove('fading'));
     }, 200);
@@ -190,20 +183,8 @@
     if (state.currentFact && next.title === state.currentFact.title && state.facts.length > 1) next = pickRandom(state.facts);
     renderFact(next);
   });
-  dom.favBtn.addEventListener('click', async () => {
-    if (!state.currentFact) return;
-    const k = factKey(state.currentFact);
-    if (state.favorites.has(k)) state.favorites.delete(k); else state.favorites.add(k);
-    await storage.set({ favorites: [...state.favorites] });
-    renderFact(state.currentFact);
-  });
 
   // ---------- Search ----------
-  const searchPanel = $('searchPanel');
-  $('searchBtn').addEventListener('click', () => {
-    searchPanel.hidden = !searchPanel.hidden;
-    if (!searchPanel.hidden) $('searchInput').focus();
-  });
   function renderSearch(q, cat) {
     const ql = (q||'').toLowerCase().trim();
     const results = state.facts.filter(f =>
@@ -229,7 +210,7 @@
       const meta = document.createElement('small');
       meta.textContent = f.category || '';
       el.appendChild(title); el.appendChild(meta);
-      el.addEventListener('click', () => { renderFact(f); searchPanel.hidden = true; });
+      el.addEventListener('click', () => { renderFact(f); });
       root.appendChild(el);
     }
   }
@@ -296,8 +277,7 @@
 
   // ---------- Init ----------
   (async () => {
-    const stored = await storage.get(['favorites']);
-    state.favorites = new Set(Array.isArray(stored.favorites) ? stored.favorites : []);
+
 
     const [facts, history] = await Promise.all([getFacts(), getHistory()]);
     state.facts = facts;
