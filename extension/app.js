@@ -277,8 +277,7 @@
 
   // ---------- Init ----------
   (async () => {
-    const stored = await storage.get(['favorites']);
-    state.favorites = new Set(Array.isArray(stored.favorites) ? stored.favorites : []);
+
 
     const [facts, history] = await Promise.all([getFacts(), getHistory()]);
     state.facts = facts;
