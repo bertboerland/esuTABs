@@ -21,9 +21,10 @@ const RSS_SOURCES = {
 
 // Configure these to point at your repo
 const GITHUB_RAW = {
-  facts: 'https://raw.githubusercontent.com/bertboerland/esutabs/main/data/facts.json',
-  history: 'https://raw.githubusercontent.com/bertboerland/esutabs/main/data/history.json'
+  facts: 'https://raw.githubusercontent.com/bertboerland/esuTABs/main/extension/data/facts.json',
+  history: 'https://raw.githubusercontent.com/bertboerland/esuTABs/main/extension/data/history.json'
 };
+
 
 chrome.runtime.onInstalled.addListener(async () => {
   chrome.alarms.create(RSS_ALARM, { delayInMinutes: 1, periodInMinutes: 60 });

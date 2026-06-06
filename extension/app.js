@@ -14,27 +14,41 @@
   // ---------- Clock + countdown ----------
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const MILESTONES = [[1,1],[4,1],[7,1],[10,1]]; // monthIndex (0-based), day → 1 Feb/May/Aug/Nov
+  const MILESTONES = ['2026-02-01','2026-05-01','2026-08-01','2026-11-01'];
 
   function fmtClock(d) {
     const pad = (n) => String(n).padStart(2,'0');
     return `${DAYS[d.getDay()]}, ${pad(d.getDate())} ${MONTHS[d.getMonth()]} ${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   }
+  function ymd(d) {
+    const pad = (n) => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+  function parseYmd(s) {
+    const [y,m,d] = s.split('-').map(Number);
+    return new Date(y, m-1, d);
+  }
+  function milestoneLabel(dateStr) {
+    const d = parseYmd(dateStr);
+    return `1 ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  }
   function nextMilestone(now) {
-    const y = now.getFullYear();
-    for (const [m,d] of MILESTONES) {
-      const cand = new Date(y, m, d);
-      const sameDay = cand.toDateString() === now.toDateString();
-      if (sameDay) return { date: cand, sameDay: true };
-      if (cand > now) return { date: cand, sameDay: false };
+    const today = ymd(now);
+    for (const m of MILESTONES) {
+      if (m === today) return { date: m, sameDay: true };
+      if (parseYmd(m) > now) return { date: m, sameDay: false };
     }
-    return { date: new Date(y+1, 1, 1), sameDay: false };
+    return { date: MILESTONES[MILESTONES.length-1], sameDay: false };
   }
   function fmtCountdown(now) {
     const { date, sameDay } = nextMilestone(now);
-    const label = `1 ${MONTHS[date.getMonth()]}`;
-    if (sameDay) return `Today: ${label}`;
-    const ms = date - now;
+    const label = milestoneLabel(date);
+    if (sameDay) {
+      const month = parseYmd(date).getMonth();
+      if (month === 10) return 'New year!';
+      return 'New quarter!';
+    }
+    const ms = parseYmd(date) - now;
     const days = Math.ceil(ms / 86400000);
     return `${days} day${days===1?'':'s'} until ${label}`;
   }
@@ -43,6 +57,7 @@
   tickClock(); tickCountdown();
   setInterval(tickClock, 1000);
   setInterval(tickCountdown, 60000);
+
 
   // ---------- Theme ----------
   function applyTheme(pref) {
@@ -108,7 +123,8 @@
   function pickRandom(list) { return list[Math.floor(Math.random() * list.length)]; }
   function todayKey() {
     const d = new Date();
-    return `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const pad = (n) => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   }
   function todayHistoryFact(history) {
     const key = todayKey();
@@ -116,6 +132,7 @@
     if (!m) return null;
     return { title: m.title, description: m.description, category: 'This Day in Open Source History' };
   }
+
 
   $('nextFactBtn').addEventListener('click', () => {
     if (!allFacts.length) return;
