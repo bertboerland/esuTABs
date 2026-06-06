@@ -244,6 +244,23 @@ body {
 .footer .links a { color: var(--text-2); text-decoration: none; margin: 0 2px; }
 .footer .links a:hover { color: var(--accent); }
 
+@media (max-width: 720px) {
+  .app { padding: 14px 16px 32px; gap: 20px; }
+  .sysbar { flex-direction: column; align-items: flex-start; gap: 8px; font-size: 12px; }
+  .sysbar-right { width: 100%; justify-content: space-between; }
+  .wordmark { font-size: 40px; }
+  .tagline { font-size: 14px; }
+  .card { padding: 20px; }
+  .fact-title { font-size: 24px; }
+  .fact-desc { font-size: 15px; }
+  .card-foot { flex-direction: column; align-items: stretch; gap: 12px; }
+  .primary-btn { width: 100%; }
+}
+@media (max-width: 380px) {
+  .wordmark { font-size: 32px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
