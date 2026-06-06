@@ -22,14 +22,14 @@
   <div class="app">
     <header class="sysbar" role="banner">
       <div class="sysbar-left">
-        <span id="clock" aria-live="off">—</span>
+        <span id="clock" aria-live="polite" aria-atomic="true">—</span>
       </div>
       <div class="sysbar-right">
-        <span id="countdown">—</span>
+        <span id="countdown" aria-live="polite" aria-atomic="true">—</span>
         <div class="theme-toggle" role="tablist" aria-label="Theme">
-          <button data-theme="light" aria-label="Light">☀</button>
-          <button data-theme="system" aria-label="System">◐</button>
-          <button data-theme="dark" aria-label="Dark">☾</button>
+          <button data-theme="light" aria-label="Light" aria-pressed="false">☀</button>
+          <button data-theme="system" aria-label="System" aria-pressed="false">◐</button>
+          <button data-theme="dark" aria-label="Dark" aria-pressed="false">☾</button>
         </div>
       </div>
     </header>
