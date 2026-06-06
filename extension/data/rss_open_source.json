@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Linux Foundation News",
+    "link": "https://www.linuxfoundation.org/",
+    "source": "Linux Foundation"
+  },
+  {
+    "title": "CNCF Blog",
+    "link": "https://www.cncf.io/blog/",
+    "source": "CNCF"
+  },
+  {
+    "title": "Open Source Initiative",
+    "link": "https://opensource.org/blog",
+    "source": "OSI"
+  },
+  {
+    "title": "Debian News",
+    "link": "https://www.debian.org/News/news",
+    "source": "Debian"
+  },
+  {
+    "title": "Fedora Magazine",
+    "link": "https://fedoramagazine.org/",
+    "source": "Fedora"
+  }
+]

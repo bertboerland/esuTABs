@@ -128,7 +128,7 @@
   }
   function validHistoryItem(h) {
     return h && typeof h === 'object'
-      && typeof h.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(h.date)
+      && typeof h.date === 'string' && (/^\d{4}-\d{2}-\d{2}$/.test(h.date) || /^\d{2}-\d{2}$/.test(h.date))
       && typeof h.title === 'string' && typeof h.description === 'string';
   }
   function sanitizeFacts(arr) {
@@ -175,9 +175,11 @@
 
   function pickRandom(list) { return list[Math.floor(Math.random() * list.length)]; }
   function todayKey() { return ymd(new Date()); }
+  function todayMmDd() { const d = new Date(); return `${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
   function todayHistoryFact(history) {
-    const key = todayKey();
-    const m = history.find(h => h.date === key);
+    const full = todayKey();
+    const md = todayMmDd();
+    const m = history.find(h => h.date === full || h.date === md);
     if (!m) return null;
     return { title: m.title, description: m.description, category: 'This Day in Open Source History' };
   }
@@ -274,13 +276,19 @@
 
   async function loadRss() {
     const data = await storage.get(['rss_open_source','rss_suse']);
-    renderRss('rssOpenSource', data.rss_open_source || []);
-    renderRss('rssSuse', data.rss_suse || []);
+    let osItems = Array.isArray(data.rss_open_source) ? data.rss_open_source : [];
+    let suseItems = Array.isArray(data.rss_suse) ? data.rss_suse : [];
+    if (!osItems.length) osItems = (await loadJsonFallback('data/rss_open_source.json')) || [];
+    if (!suseItems.length) suseItems = (await loadJsonFallback('data/rss_suse.json')) || [];
+    renderRss('rssOpenSource', osItems);
+    renderRss('rssSuse', suseItems);
     try {
       chrome.runtime.sendMessage({ type: 'esutabs:refresh-rss' }, () => {
         chrome.storage.local.get(['rss_open_source','rss_suse'], (d) => {
-          renderRss('rssOpenSource', d.rss_open_source || []);
-          renderRss('rssSuse', d.rss_suse || []);
+          const fresh1 = Array.isArray(d.rss_open_source) && d.rss_open_source.length ? d.rss_open_source : osItems;
+          const fresh2 = Array.isArray(d.rss_suse) && d.rss_suse.length ? d.rss_suse : suseItems;
+          renderRss('rssOpenSource', fresh1);
+          renderRss('rssSuse', fresh2);
         });
       });
     } catch (e) { logErr('refresh-rss', e); }
