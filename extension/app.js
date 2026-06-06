@@ -276,13 +276,19 @@
 
   async function loadRss() {
     const data = await storage.get(['rss_open_source','rss_suse']);
-    renderRss('rssOpenSource', data.rss_open_source || []);
-    renderRss('rssSuse', data.rss_suse || []);
+    let osItems = Array.isArray(data.rss_open_source) ? data.rss_open_source : [];
+    let suseItems = Array.isArray(data.rss_suse) ? data.rss_suse : [];
+    if (!osItems.length) osItems = (await loadJsonFallback('data/rss_open_source.json')) || [];
+    if (!suseItems.length) suseItems = (await loadJsonFallback('data/rss_suse.json')) || [];
+    renderRss('rssOpenSource', osItems);
+    renderRss('rssSuse', suseItems);
     try {
       chrome.runtime.sendMessage({ type: 'esutabs:refresh-rss' }, () => {
         chrome.storage.local.get(['rss_open_source','rss_suse'], (d) => {
-          renderRss('rssOpenSource', d.rss_open_source || []);
-          renderRss('rssSuse', d.rss_suse || []);
+          const fresh1 = Array.isArray(d.rss_open_source) && d.rss_open_source.length ? d.rss_open_source : osItems;
+          const fresh2 = Array.isArray(d.rss_suse) && d.rss_suse.length ? d.rss_suse : suseItems;
+          renderRss('rssOpenSource', fresh1);
+          renderRss('rssSuse', fresh2);
         });
       });
     } catch (e) { logErr('refresh-rss', e); }
