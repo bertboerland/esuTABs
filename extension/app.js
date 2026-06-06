@@ -1,32 +1,42 @@
 // esuTABs — newtab UI
 (() => {
   const $ = (id) => document.getElementById(id);
+  const DEV = false;
+  const logErr = (where, e) => { if (DEV) console.warn('[esuTABs]', where, e); };
+
   const storage = {
     async get(keys) {
-      if (chrome?.storage?.local) return new Promise((r) => chrome.storage.local.get(keys, r));
+      try {
+        if (chrome?.storage?.local) return await new Promise((r) => chrome.storage.local.get(keys, r));
+      } catch (e) { logErr('storage.get', e); }
       return {};
     },
     async set(obj) {
-      if (chrome?.storage?.local) return new Promise((r) => chrome.storage.local.set(obj, r));
+      try {
+        if (chrome?.storage?.local) return await new Promise((r) => chrome.storage.local.set(obj, r));
+      } catch (e) { logErr('storage.set', e); }
     }
   };
 
-  // ---------- Clock + countdown ----------
+  // ---------- Pure date helpers ----------
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MILESTONES = ['2026-02-01','2026-05-01','2026-08-01','2026-11-01'];
 
+  function pad2(n) { return String(n).padStart(2,'0'); }
   function fmtClock(d) {
-    const pad = (n) => String(n).padStart(2,'0');
-    return `${DAYS[d.getDay()]}, ${pad(d.getDate())} ${MONTHS[d.getMonth()]} ${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    return `${DAYS[d.getDay()]}, ${pad2(d.getDate())} ${MONTHS[d.getMonth()]} ${d.getFullYear()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
   }
   function ymd(d) {
-    const pad = (n) => String(n).padStart(2,'0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
   }
   function parseYmd(s) {
-    const [y,m,d] = s.split('-').map(Number);
+    const [y,m,d] = String(s).split('-').map(Number);
     return new Date(y, m-1, d);
+  }
+  function startOfToday() {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate());
   }
   function milestoneLabel(dateStr) {
     const d = parseYmd(dateStr);
@@ -36,7 +46,7 @@
     const today = ymd(now);
     for (const m of MILESTONES) {
       if (m === today) return { date: m, sameDay: true };
-      if (parseYmd(m) > now) return { date: m, sameDay: false };
+      if (parseYmd(m) > startOfToday()) return { date: m, sameDay: false };
     }
     return { date: MILESTONES[MILESTONES.length-1], sameDay: false };
   }
@@ -48,16 +58,36 @@
       if (month === 10) return 'New year!';
       return 'New quarter!';
     }
-    const ms = parseYmd(date) - now;
+    const ms = parseYmd(date) - startOfToday();
     const days = Math.ceil(ms / 86400000);
     return `${days} day${days===1?'':'s'} until ${label}`;
   }
-  function tickClock() { $('clock').textContent = fmtClock(new Date()); }
-  function tickCountdown() { $('countdown').textContent = fmtCountdown(new Date()); }
+
+  // ---------- Cached DOM ----------
+  const dom = {
+    clock: $('clock'),
+    countdown: $('countdown'),
+    factTitle: $('factTitle'),
+    factDesc: $('factDesc'),
+    factCategory: $('factCategory'),
+    factSource: $('factSource'),
+    favBtn: $('favBtn'),
+  };
+
+  // ---------- State ----------
+  const state = {
+    facts: [],
+    favorites: new Set(),
+    currentFact: null,
+    categories: new Set(),
+  };
+
+  // ---------- Clock + countdown ----------
+  function tickClock() { dom.clock.textContent = fmtClock(new Date()); }
+  function tickCountdown() { dom.countdown.textContent = fmtCountdown(new Date()); }
   tickClock(); tickCountdown();
   setInterval(tickClock, 1000);
   setInterval(tickCountdown, 60000);
-
 
   // ---------- Theme ----------
   function applyTheme(pref) {
@@ -65,67 +95,86 @@
     const mode = pref === 'system' ? sys : pref;
     document.documentElement.dataset.theme = mode;
     document.documentElement.dataset.themePref = pref;
-    localStorage.setItem('esutabs.theme', pref);
+    try { localStorage.setItem('esutabs.theme', pref); } catch (e) { logErr('localStorage', e); }
     storage.set({ theme: pref });
     document.querySelectorAll('.theme-toggle button').forEach(b => {
-      b.classList.toggle('active', b.dataset.theme === pref);
+      const active = b.dataset.theme === pref;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
   }
-  const initialPref = localStorage.getItem('esutabs.theme') || 'system';
+  let initialPref = 'system';
+  try { initialPref = localStorage.getItem('esutabs.theme') || 'system'; } catch (e) { logErr('localStorage', e); }
   applyTheme(initialPref);
   document.querySelectorAll('.theme-toggle button').forEach(b => {
     b.addEventListener('click', () => applyTheme(b.dataset.theme));
   });
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => {
-    if ((localStorage.getItem('esutabs.theme') || 'system') === 'system') applyTheme('system');
+    let pref = 'system';
+    try { pref = localStorage.getItem('esutabs.theme') || 'system'; } catch (e) { logErr('localStorage', e); }
+    if (pref === 'system') applyTheme('system');
   });
 
-  // ---------- Data loading ----------
+  // ---------- Data loading & validation ----------
   async function loadJsonFallback(path) {
-    try { const r = await fetch(path); if (r.ok) return await r.json(); } catch {}
+    try { const r = await fetch(path); if (r.ok) return await r.json(); }
+    catch (e) { logErr('fetch ' + path, e); }
     return null;
+  }
+  function validFact(f) {
+    return f && typeof f === 'object'
+      && typeof f.title === 'string' && f.title.length
+      && typeof f.description === 'string';
+  }
+  function validHistoryItem(h) {
+    return h && typeof h === 'object'
+      && typeof h.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(h.date)
+      && typeof h.title === 'string' && typeof h.description === 'string';
+  }
+  function sanitizeFacts(arr) {
+    return Array.isArray(arr) ? arr.filter(validFact) : [];
+  }
+  function sanitizeHistory(arr) {
+    return Array.isArray(arr) ? arr.filter(validHistoryItem) : [];
   }
   async function getFacts() {
     const cached = await storage.get(['gh_facts']);
-    if (cached.gh_facts && Array.isArray(cached.gh_facts) && cached.gh_facts.length) return cached.gh_facts;
-    return (await loadJsonFallback('data/facts.json')) || [];
+    const c = sanitizeFacts(cached.gh_facts);
+    if (c.length) return c;
+    return sanitizeFacts(await loadJsonFallback('data/facts.json'));
   }
   async function getHistory() {
     const cached = await storage.get(['gh_history']);
-    if (cached.gh_history && Array.isArray(cached.gh_history) && cached.gh_history.length) return cached.gh_history;
-    return (await loadJsonFallback('data/history.json')) || [];
+    const c = sanitizeHistory(cached.gh_history);
+    if (c.length) return c;
+    return sanitizeHistory(await loadJsonFallback('data/history.json'));
   }
 
   // ---------- Knowledge card ----------
-  let allFacts = [];
-  let categoriesSet = new Set();
-  let currentFact = null;
-  let favorites = new Set();
+  function factKey(f) { return `${f.category}::${f.title}`; }
 
   function renderFact(fact) {
     if (!fact) return;
-    const t = $('factTitle'), d = $('factDesc'), c = $('factCategory'), s = $('factSource'), f = $('favBtn');
+    const { factTitle: t, factDesc: d, factCategory: c, factSource: s, favBtn: f } = dom;
     [t,d].forEach(el => el.classList.add('fading'));
     setTimeout(() => {
       t.textContent = fact.title;
       d.textContent = fact.description;
       c.textContent = fact.category || 'Knowledge';
-      if (fact.source_url) { s.href = fact.source_url; s.hidden = false; } else { s.hidden = true; }
+      const safeSrc = typeof fact.source_url === 'string' && /^https:\/\//i.test(fact.source_url);
+      if (safeSrc) { s.href = fact.source_url; s.hidden = false; } else { s.hidden = true; s.removeAttribute('href'); }
       const key = factKey(fact);
-      f.classList.toggle('active', favorites.has(key));
-      f.textContent = favorites.has(key) ? '♥' : '♡';
-      currentFact = fact;
+      const isFav = state.favorites.has(key);
+      f.classList.toggle('active', isFav);
+      f.textContent = isFav ? '♥' : '♡';
+      f.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+      state.currentFact = fact;
       [t,d].forEach(el => el.classList.remove('fading'));
     }, 200);
   }
-  function factKey(f) { return `${f.category}::${f.title}`; }
 
   function pickRandom(list) { return list[Math.floor(Math.random() * list.length)]; }
-  function todayKey() {
-    const d = new Date();
-    const pad = (n) => String(n).padStart(2,'0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-  }
+  function todayKey() { return ymd(new Date()); }
   function todayHistoryFact(history) {
     const key = todayKey();
     const m = history.find(h => h.date === key);
@@ -133,19 +182,18 @@
     return { title: m.title, description: m.description, category: 'This Day in Open Source History' };
   }
 
-
   $('nextFactBtn').addEventListener('click', () => {
-    if (!allFacts.length) return;
-    let next = pickRandom(allFacts);
-    if (currentFact && next.title === currentFact.title && allFacts.length > 1) next = pickRandom(allFacts);
+    if (!state.facts.length) return;
+    let next = pickRandom(state.facts);
+    if (state.currentFact && next.title === state.currentFact.title && state.facts.length > 1) next = pickRandom(state.facts);
     renderFact(next);
   });
-  $('favBtn').addEventListener('click', async () => {
-    if (!currentFact) return;
-    const k = factKey(currentFact);
-    if (favorites.has(k)) favorites.delete(k); else favorites.add(k);
-    await storage.set({ favorites: [...favorites] });
-    renderFact(currentFact);
+  dom.favBtn.addEventListener('click', async () => {
+    if (!state.currentFact) return;
+    const k = factKey(state.currentFact);
+    if (state.favorites.has(k)) state.favorites.delete(k); else state.favorites.add(k);
+    await storage.set({ favorites: [...state.favorites] });
+    renderFact(state.currentFact);
   });
 
   // ---------- Search ----------
@@ -156,38 +204,64 @@
   });
   function renderSearch(q, cat) {
     const ql = (q||'').toLowerCase().trim();
-    const results = allFacts.filter(f =>
+    const results = state.facts.filter(f =>
       (!cat || f.category === cat) &&
-      (!ql || f.title.toLowerCase().includes(ql) || f.description.toLowerCase().includes(ql))
+      (!ql || f.title.toLowerCase().includes(ql) || (f.description||'').toLowerCase().includes(ql))
     ).slice(0, 30);
     const root = $('searchResults');
-    root.innerHTML = '';
+    root.textContent = '';
+    if (!results.length) {
+      const div = document.createElement('div');
+      div.className = 'item';
+      const small = document.createElement('small');
+      small.textContent = 'No matches';
+      div.appendChild(small);
+      root.appendChild(div);
+      return;
+    }
     for (const f of results) {
       const el = document.createElement('div');
       el.className = 'item';
-      el.innerHTML = `<div>${escapeHtml(f.title)}</div><small>${escapeHtml(f.category)}</small>`;
+      const title = document.createElement('div');
+      title.textContent = f.title;
+      const meta = document.createElement('small');
+      meta.textContent = f.category || '';
+      el.appendChild(title); el.appendChild(meta);
       el.addEventListener('click', () => { renderFact(f); searchPanel.hidden = true; });
       root.appendChild(el);
     }
-    if (!results.length) root.innerHTML = '<div class="item"><small>No matches</small></div>';
   }
-  $('searchInput').addEventListener('input', e => renderSearch(e.target.value, $('categoryFilter').value));
+  function debounce(fn, ms) {
+    let t;
+    return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  }
+  const debouncedSearch = debounce(() => renderSearch($('searchInput').value, $('categoryFilter').value), 200);
+  $('searchInput').addEventListener('input', debouncedSearch);
   $('categoryFilter').addEventListener('change', e => renderSearch($('searchInput').value, e.target.value));
 
-  function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-
   // ---------- RSS render ----------
+  function safeUrl(u) {
+    return typeof u === 'string' && /^https:\/\//i.test(u);
+  }
   function renderRss(listId, items) {
     const ul = document.getElementById(listId);
-    ul.innerHTML = '';
-    if (!items || !items.length) {
-      ul.innerHTML = '<li class="skeleton">No items cached yet.</li>';
+    ul.textContent = '';
+    const safeItems = Array.isArray(items)
+      ? items.filter(it => it && typeof it.title === 'string' && safeUrl(it.link))
+      : [];
+    if (!safeItems.length) {
+      const li = document.createElement('li');
+      li.className = 'skeleton';
+      li.textContent = 'No items cached yet.';
+      ul.appendChild(li);
       return;
     }
-    for (const it of items.slice(0, 5)) {
+    for (const it of safeItems.slice(0, 5)) {
       const li = document.createElement('li');
       const a = document.createElement('a');
-      a.href = it.link; a.target = '_blank'; a.rel = 'noopener';
+      a.href = it.link;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
       a.textContent = it.title;
       const meta = document.createElement('span');
       meta.className = 'meta';
@@ -202,25 +276,26 @@
     const data = await storage.get(['rss_open_source','rss_suse']);
     renderRss('rssOpenSource', data.rss_open_source || []);
     renderRss('rssSuse', data.rss_suse || []);
-    // Ask background to refresh in case alarm hasn't run yet
-    try { chrome.runtime.sendMessage({ type: 'esutabs:refresh-rss' }, () => {
-      chrome.storage.local.get(['rss_open_source','rss_suse'], (d) => {
-        renderRss('rssOpenSource', d.rss_open_source || []);
-        renderRss('rssSuse', d.rss_suse || []);
+    try {
+      chrome.runtime.sendMessage({ type: 'esutabs:refresh-rss' }, () => {
+        chrome.storage.local.get(['rss_open_source','rss_suse'], (d) => {
+          renderRss('rssOpenSource', d.rss_open_source || []);
+          renderRss('rssSuse', d.rss_suse || []);
+        });
       });
-    }); } catch {}
+    } catch (e) { logErr('refresh-rss', e); }
   }
 
   // ---------- Init ----------
   (async () => {
     const stored = await storage.get(['favorites']);
-    favorites = new Set(stored.favorites || []);
+    state.favorites = new Set(Array.isArray(stored.favorites) ? stored.favorites : []);
 
     const [facts, history] = await Promise.all([getFacts(), getHistory()]);
-    allFacts = facts;
-    categoriesSet = new Set(facts.map(f => f.category));
+    state.facts = facts;
+    state.categories = new Set(facts.map(f => f.category).filter(Boolean));
     const sel = $('categoryFilter');
-    [...categoriesSet].sort().forEach(c => {
+    [...state.categories].sort().forEach(c => {
       const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
     });
 
