@@ -33,7 +33,7 @@ function Index() {
         </header>
 
         <h1 className="text-7xl font-bold tracking-tight leading-none">
-          <span className="text-white">esu</span>
+          <span className="text-[#30BA78]">esu</span>
           <span className="text-white">TAB</span>
           <span className="text-[#30BA78]">s</span>
         </h1>
