@@ -1,17 +1,118 @@
 [
-  { "title": "The birth of Linux", "category": "Linux", "description": "On 25 August 1991, Linus Torvalds announced a 'free operating system (just a hobby, won't be big and professional like gnu)'. Today Linux runs the majority of servers, all top supercomputers, and Android.", "source_url": "https://en.wikipedia.org/wiki/History_of_Linux" },
-  { "title": "Kubernetes came from Borg", "category": "Kubernetes", "description": "Kubernetes was created at Google, inspired by their internal cluster manager Borg, and donated to the CNCF in 2015 as its first project.", "source_url": "https://kubernetes.io/" },
-  { "title": "The GPL flips copyright into copyleft", "category": "Open Source", "description": "The GNU General Public License uses copyright law to guarantee freedoms to use, study, share and modify software — a legal hack invented by Richard Stallman.", "source_url": "https://www.gnu.org/licenses/gpl-3.0.html" },
-  { "title": "openSUSE and SUSE Linux", "category": "Open Source", "description": "SUSE, founded in Germany in 1992, is the oldest existing commercial Linux distribution and stewards the openSUSE community project.", "source_url": "https://www.suse.com/" },
-  { "title": "Digital sovereignty in the EU", "category": "European Tech Sovereignty", "description": "The EU defines digital sovereignty as Europe's ability to act independently in the digital world, leveraging open source as a strategic lever.", "source_url": "https://digital-strategy.ec.europa.eu/" },
-  { "title": "Drupal powers governments", "category": "Drupal", "description": "Drupal is used by whitehouse.gov, the European Commission, and many other public institutions thanks to its strong content modelling and open governance.", "source_url": "https://www.drupal.org/" },
-  { "title": "The Unix philosophy", "category": "Software Architecture", "description": "Write programs that do one thing well, and work together. Doug McIlroy's 1978 maxim still shapes microservices and cloud-native design today.", "source_url": "https://en.wikipedia.org/wiki/Unix_philosophy" },
-  { "title": "Tim Berners-Lee gave away the Web", "category": "Internet History", "description": "In 1993 CERN released the World Wide Web software into the public domain, ensuring an open, royalty-free Web for everyone.", "source_url": "https://home.cern/science/computing/birth-web" },
-  { "title": "Ada Lovelace, first programmer", "category": "Famous Engineers", "description": "In 1843 Ada Lovelace published the first algorithm intended for a machine — Charles Babbage's Analytical Engine.", "source_url": "https://en.wikipedia.org/wiki/Ada_Lovelace" },
-  { "title": "RFCs built the Internet", "category": "Open Standards", "description": "Request for Comments documents, started by Steve Crocker in 1969, are the open, consensus-driven backbone of Internet standards.", "source_url": "https://www.rfc-editor.org/" },
-  { "title": "Supply chain security with Sigstore", "category": "Security", "description": "Sigstore provides free signing, verification and provenance checks for open source artifacts, hosted under the OpenSSF.", "source_url": "https://www.sigstore.dev/" },
-  { "title": "Containers without Docker", "category": "Kubernetes", "description": "Kubernetes moved away from the Docker shim in 1.24, embracing the container runtime interface with runtimes like containerd and CRI-O.", "source_url": "https://kubernetes.io/blog/2022/02/17/dockershim-faq/" },
-  { "title": "GAIA-X and European cloud", "category": "European Tech Sovereignty", "description": "GAIA-X aims to build a federated, sovereign data infrastructure for Europe, based on open standards and interoperability.", "source_url": "https://gaia-x.eu/" },
-  { "title": "Linus's Law", "category": "Open Source", "description": "'Given enough eyeballs, all bugs are shallow.' Eric S. Raymond's principle from The Cathedral and the Bazaar captures the power of open collaboration.", "source_url": "https://en.wikipedia.org/wiki/Linus%27s_law" },
-  { "title": "The principle of least privilege", "category": "Security", "description": "First articulated by Saltzer and Schroeder in 1975, every program and user should operate with the minimum privileges necessary to complete the job.", "source_url": "https://en.wikipedia.org/wiki/Principle_of_least_privilege" }
+  {
+    "title": "Linux Kernel Release",
+    "description": "Linux is continuously developed as a monolithic kernel with modular extensions since 1991.",
+    "category": "Linux",
+    "source_url": "https://kernel.org"
+  },
+  {
+    "title": "Kubernetes Origins",
+    "description": "Kubernetes was originally designed by Google based on internal cluster management systems.",
+    "category": "Kubernetes",
+    "source_url": "https://kubernetes.io"
+  },
+  {
+    "title": "Open Source Definition",
+    "description": "Open source software allows users to study, change, and distribute the software freely.",
+    "category": "Open Source",
+    "source_url": "https://opensource.org"
+  },
+  {
+    "title": "Conway's Law",
+    "description": "Organizations design systems that mirror their communication structures.",
+    "category": "Software Architecture",
+    "source_url": "https://en.wikipedia.org/wiki/Conway%27s_law"
+  },
+  {
+    "title": "Git Version Control",
+    "description": "Git was created by Linus Torvalds to support Linux kernel development.",
+    "category": "Software Tools",
+    "source_url": "https://git-scm.com"
+  },
+  {
+    "title": "Docker Containers",
+    "description": "Docker popularized lightweight containerization for application deployment.",
+    "category": "Cloud Native",
+    "source_url": "https://docker.com"
+  },
+  {
+    "title": "CNCF Foundation",
+    "description": "The Cloud Native Computing Foundation hosts Kubernetes and many open source projects.",
+    "category": "Cloud Native",
+    "source_url": "https://cncf.io"
+  },
+  {
+    "title": "GNU Project",
+    "description": "The GNU project aimed to create a completely free Unix-like operating system.",
+    "category": "Open Source",
+    "source_url": "https://gnu.org"
+  },
+  {
+    "title": "Linux Distributions",
+    "description": "Distributions like Debian, Fedora, and SUSE package Linux with different tools and policies.",
+    "category": "Linux",
+    "source_url": "https://distrowatch.com"
+  },
+  {
+    "title": "Systemd",
+    "description": "Systemd is a system and service manager widely used in modern Linux distributions.",
+    "category": "Linux",
+    "source_url": "https://systemd.io"
+  },
+  {
+    "title": "Open Standards Matter",
+    "description": "Open standards ensure interoperability between different software systems.",
+    "category": "Open Standards",
+    "source_url": "https://en.wikipedia.org/wiki/Open_standard"
+  },
+  {
+    "title": "Microservices Architecture",
+    "description": "Microservices split applications into small independent services.",
+    "category": "Software Architecture",
+    "source_url": "https://martinfowler.com/articles/microservices.html"
+  },
+  {
+    "title": "Linux is Everywhere",
+    "description": "Linux powers most cloud infrastructure, mobile devices, and embedded systems.",
+    "category": "Linux"
+  },
+  {
+    "title": "Open Source Collaboration",
+    "description": "Open source thrives on distributed collaboration across global communities.",
+    "category": "Open Source"
+  },
+  {
+    "title": "GitHub Impact",
+    "description": "GitHub significantly accelerated global open source collaboration.",
+    "category": "Software Tools",
+    "source_url": "https://github.com"
+  },
+  {
+    "title": "Containers vs VMs",
+    "description": "Containers share OS kernel while VMs emulate full hardware stacks.",
+    "category": "Cloud Native"
+  },
+  {
+    "title": "Linux Security Model",
+    "description": "Linux uses permission-based access control and modular security layers.",
+    "category": "Security"
+  },
+  {
+    "title": "Bash Shell",
+    "description": "Bash is a widely used Unix shell for scripting and automation.",
+    "category": "Linux",
+    "source_url": "https://www.gnu.org/software/bash/"
+  },
+  {
+    "title": "Open Source Licensing",
+    "description": "Licenses like GPL define how software can be used and distributed.",
+    "category": "Open Source",
+    "source_url": "https://www.gnu.org/licenses/gpl-3.0.en.html"
+  },
+  {
+    "title": "Kubernetes Pods",
+    "description": "Pods are the smallest deployable units in Kubernetes.",
+    "category": "Kubernetes",
+    "source_url": "https://kubernetes.io/docs/concepts/workloads/pods/"
+  }
 ]
