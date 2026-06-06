@@ -71,13 +71,11 @@
     factDesc: $('factDesc'),
     factCategory: $('factCategory'),
     factSource: $('factSource'),
-    favBtn: $('favBtn'),
   };
 
   // ---------- State ----------
   const state = {
     facts: [],
-    favorites: new Set(),
     currentFact: null,
     categories: new Set(),
   };
