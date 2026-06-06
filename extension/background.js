@@ -150,5 +150,9 @@ async function syncGithub() {
   if (Object.keys(update).length) {
     update.gh_last_sync = Date.now();
     await chrome.storage.local.set(update);
+    // If the feed source list changed, immediately re-pull headlines so the
+    // user sees the new sources without waiting for the next RSS alarm.
+    if ('gh_feeds' in update) await refreshRss().catch(() => {});
   }
 }
+
