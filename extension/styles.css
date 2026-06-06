@@ -287,3 +287,30 @@ body {
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* On This Day card */
+.otd-card {
+  margin: 12px auto 0;
+  max-width: 920px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklab, var(--accent) 22%, var(--border));
+  background: color-mix(in oklab, var(--accent) 6%, transparent);
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  font-size: 13px;
+}
+.otd-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.otd-body { color: var(--text-2); }
+.otd-body strong { color: var(--text); margin-right: 6px; }
+@media (max-width: 640px) {
+  .otd-card { flex-direction: column; gap: 4px; align-items: flex-start; }
+}
