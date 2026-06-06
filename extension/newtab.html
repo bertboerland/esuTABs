@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>esuTABs — New Tab</title>
+<link rel="stylesheet" href="styles.css" />
+<script>
+  // Apply theme before first paint to avoid flicker
+  (function () {
+    try {
+      const stored = localStorage.getItem('esutabs.theme') || 'system';
+      const sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const mode = stored === 'system' ? sys : stored;
+      document.documentElement.dataset.theme = mode;
+      document.documentElement.dataset.themePref = stored;
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+  <div class="app">
+    <header class="sysbar" role="banner">
+      <div class="sysbar-left">
+        <span id="clock" aria-live="off">—</span>
+      </div>
+      <div class="sysbar-right">
+        <span id="countdown">—</span>
+        <div class="theme-toggle" role="tablist" aria-label="Theme">
+          <button data-theme="light" aria-label="Light">☀</button>
+          <button data-theme="system" aria-label="System">◐</button>
+          <button data-theme="dark" aria-label="Dark">☾</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="brand">
+      <h1 class="wordmark" aria-label="esuTABs">
+        <span class="wm-neutral">esu</span><span class="wm-neutral wm-tab">TAB</span><span class="wm-accent">s</span>
+      </h1>
+      <p class="tagline">Open Source Knowledge, One Tab at a Time</p>
+    </section>
+
+    <main class="main">
+      <article class="card knowledge-card" id="knowledgeCard">
+        <div class="card-head">
+          <span class="badge" id="factCategory">Loading</span>
+          <div class="card-actions">
+            <button class="icon-btn" id="favBtn" aria-label="Favorite" title="Favorite">♡</button>
+            <button class="icon-btn" id="searchBtn" aria-label="Search" title="Search">⌕</button>
+          </div>
+        </div>
+        <h2 class="fact-title" id="factTitle">Welcome to esuTABs</h2>
+        <p class="fact-desc" id="factDesc">Loading knowledge…</p>
+        <div class="card-foot">
+          <a id="factSource" class="source-link" href="#" target="_blank" rel="noopener" hidden>Source ↗</a>
+          <button class="primary-btn" id="nextFactBtn">Next Fact →</button>
+        </div>
+      </article>
+
+      <div class="search-panel" id="searchPanel" hidden>
+        <input type="search" id="searchInput" placeholder="Search facts…" />
+        <select id="categoryFilter">
+          <option value="">All categories</option>
+        </select>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+
+      <section class="rss-grid" aria-label="News">
+        <div class="rss-col">
+          <h3 class="rss-title">Open Source News</h3>
+          <ul class="rss-list" id="rssOpenSource"><li class="skeleton">Loading…</li></ul>
+        </div>
+        <div class="rss-col">
+          <h3 class="rss-title">SUSE News</h3>
+          <ul class="rss-list" id="rssSuse"><li class="skeleton">Loading…</li></ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Made with <span class="heart">❤</span> by Bert Boerland</p>
+      <p class="muted">This Chrome Extension is not affiliated with, endorsed by, or sponsored by SUSE.</p>
+      <p class="muted">Copyright © 2026 Bert Boerland · Released under GPLv2 or later.</p>
+      <p class="links">
+        <a href="#" id="lnkHome">Homepage</a> ·
+        <a href="#" id="lnkGithub">GitHub</a> ·
+        <a href="#" id="lnkPrivacy">Privacy Policy</a> ·
+        <a href="#" id="lnkLicense">License</a>
+      </p>
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
