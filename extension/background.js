@@ -4,7 +4,9 @@
 const RSS_ALARM = 'esutabs-rss-refresh';
 const GH_ALARM = 'esutabs-github-sync';
 
-const RSS_SOURCES = {
+// Default feed sources — used only as offline fallback if neither the
+// remote feeds.json (GitHub) nor the bundled extension/data/feeds.json is reachable.
+const DEFAULT_RSS_SOURCES = {
   rss_open_source: [
     'https://www.linuxfoundation.org/feed/',
     'https://www.cncf.io/feed/',
@@ -19,11 +21,40 @@ const RSS_SOURCES = {
   ]
 };
 
-// Configure these to point at your repo
+// Remote-configurable content on GitHub (raw). Edit these files in the repo
+// to change facts, "on this day" entries, OR which RSS feed URLs are pulled
+// for the two fixed categories (open source + SUSE).
 const GITHUB_RAW = {
   facts: 'https://raw.githubusercontent.com/bertboerland/esuTABs/main/extension/data/facts.json',
-  history: 'https://raw.githubusercontent.com/bertboerland/esuTABs/main/extension/data/history.json'
+  history: 'https://raw.githubusercontent.com/bertboerland/esuTABs/main/extension/data/history.json',
+  feeds: 'https://raw.githubusercontent.com/bertboerland/esuTABs/main/extension/data/feeds.json'
 };
+
+function validFeedsConfig(o) {
+  return o && typeof o === 'object'
+    && Array.isArray(o.rss_open_source) && o.rss_open_source.every(u => typeof u === 'string' && /^https:\/\//i.test(u))
+    && Array.isArray(o.rss_suse) && o.rss_suse.every(u => typeof u === 'string' && /^https:\/\//i.test(u));
+}
+
+async function getFeedSources() {
+  // 1. Remote override cached from GitHub
+  try {
+    const { gh_feeds } = await chrome.storage.local.get('gh_feeds');
+    if (validFeedsConfig(gh_feeds)) return gh_feeds;
+  } catch (_) {}
+  // 2. Bundled file shipped with the extension
+  try {
+    const res = await fetch(chrome.runtime.getURL('data/feeds.json'));
+    if (res.ok) {
+      const json = await res.json();
+      if (validFeedsConfig(json)) return json;
+    }
+  } catch (_) {}
+  // 3. Hardcoded fallback
+  return DEFAULT_RSS_SOURCES;
+}
+
+
 
 
 chrome.runtime.onInstalled.addListener(async () => {
@@ -52,8 +83,9 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 });
 
 async function refreshRss() {
+  const sources = await getFeedSources();
   const out = {};
-  for (const [key, urls] of Object.entries(RSS_SOURCES)) {
+  for (const [key, urls] of Object.entries(sources)) {
     const items = [];
     for (const url of urls) {
       try {
