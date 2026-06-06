@@ -112,20 +112,28 @@ body {
   padding: 24px;
 }
 
-/* Knowledge card — elevated hero */
+/* Knowledge card — elevated hero with bold green background */
 .knowledge-card {
   display: flex; flex-direction: column; gap: 14px;
   min-height: 260px;
-  background:
-    linear-gradient(180deg, var(--card-hero) 0%, var(--card-hero) 100%),
-    radial-gradient(120% 80% at 50% 0%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 60%);
-  background-blend-mode: normal;
-  border: 1px solid color-mix(in oklab, var(--accent) 22%, var(--border));
+  background: var(--hero-bg);
+  border: 1px solid var(--hero-border);
   box-shadow: var(--shadow-hero);
   padding: 32px;
   position: relative;
   transform: translateY(-2px);
+  color: var(--hero-text);
 }
+.knowledge-card .fact-title { color: var(--hero-text); }
+.knowledge-card .fact-desc { color: var(--hero-text-2); }
+.knowledge-card .badge {
+  background: rgba(255,255,255,0.18);
+  color: #FFFFFF;
+}
+.knowledge-card .source-link { color: var(--hero-text-2); }
+.knowledge-card .source-link:hover { color: #FFFFFF; }
+.knowledge-card .primary-btn { background: rgba(0,0,0,0.35); }
+.knowledge-card .primary-btn:hover { background: rgba(0,0,0,0.5); }
 .card-head {
   display: flex; justify-content: space-between; align-items: center;
 }
