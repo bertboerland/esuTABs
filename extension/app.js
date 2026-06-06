@@ -128,7 +128,7 @@
   }
   function validHistoryItem(h) {
     return h && typeof h === 'object'
-      && typeof h.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(h.date)
+      && typeof h.date === 'string' && (/^\d{4}-\d{2}-\d{2}$/.test(h.date) || /^\d{2}-\d{2}$/.test(h.date))
       && typeof h.title === 'string' && typeof h.description === 'string';
   }
   function sanitizeFacts(arr) {
