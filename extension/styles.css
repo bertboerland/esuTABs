@@ -13,6 +13,10 @@
   --shadow-hero: 0 4px 12px rgba(0,0,0,0.06), 0 24px 60px rgba(48,186,120,0.18);
   --wm-tab: #000000;
   --radius: 14px;
+  --hero-bg: linear-gradient(135deg, #0F5A3A 0%, #186E45 100%);
+  --hero-border: rgba(0,0,0,0.25);
+  --hero-text: #FFFFFF;
+  --hero-text-2: rgba(255,255,255,0.85);
 }
 html[data-theme="dark"] {
   --bg: #0F1115;
@@ -27,6 +31,10 @@ html[data-theme="dark"] {
   --shadow-hero: 0 4px 12px rgba(0,0,0,0.5), 0 24px 60px rgba(48,186,120,0.22);
   --wm-tab: #FFFFFF;
   --accent-dark: #248A5A;
+  --hero-bg: linear-gradient(135deg, #2EA86A 0%, #34C77A 100%);
+  --hero-border: rgba(255,255,255,0.15);
+  --hero-text: #0A1A12;
+  --hero-text-2: rgba(10,26,18,0.78);
 }
 
 * { box-sizing: border-box; }
@@ -112,20 +120,28 @@ body {
   padding: 24px;
 }
 
-/* Knowledge card — elevated hero */
+/* Knowledge card — elevated hero with bold green background */
 .knowledge-card {
   display: flex; flex-direction: column; gap: 14px;
   min-height: 260px;
-  background:
-    linear-gradient(180deg, var(--card-hero) 0%, var(--card-hero) 100%),
-    radial-gradient(120% 80% at 50% 0%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 60%);
-  background-blend-mode: normal;
-  border: 1px solid color-mix(in oklab, var(--accent) 22%, var(--border));
+  background: var(--hero-bg);
+  border: 1px solid var(--hero-border);
   box-shadow: var(--shadow-hero);
   padding: 32px;
   position: relative;
   transform: translateY(-2px);
+  color: var(--hero-text);
 }
+.knowledge-card .fact-title { color: var(--hero-text); }
+.knowledge-card .fact-desc { color: var(--hero-text-2); }
+.knowledge-card .badge {
+  background: rgba(255,255,255,0.18);
+  color: #FFFFFF;
+}
+.knowledge-card .source-link { color: var(--hero-text-2); }
+.knowledge-card .source-link:hover { color: #FFFFFF; }
+.knowledge-card .primary-btn { background: rgba(0,0,0,0.35); }
+.knowledge-card .primary-btn:hover { background: rgba(0,0,0,0.5); }
 .card-head {
   display: flex; justify-content: space-between; align-items: center;
 }
@@ -238,6 +254,20 @@ body {
   color: var(--text-2);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rss-logo { display: inline-flex; align-items: center; color: var(--accent); }
+.suse-logo {
+  background: #30BA78;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  line-height: 1;
 }
 .rss-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
 .rss-list li {
@@ -252,19 +282,26 @@ body {
 .rss-list .meta { display: block; color: var(--text-2); font-size: 11px; margin-top: 1px; }
 .rss-list .skeleton { color: var(--text-2); }
 
-/* Footer — two lines */
+/* Footer — single line */
 .footer {
   text-align: center;
   color: var(--text-2);
   font-size: 12px;
   margin-top: 12px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .footer p { margin: 2px 0; }
-.footer .muted { opacity: 0.85; }
-.footer .heart { color: var(--accent); }
-.footer a { color: var(--text-2); text-decoration: none; }
+.footer a {
+  color: var(--text-2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
 .footer a:hover { color: var(--accent); }
+.footer a svg { opacity: 0.85; }
+.footer .heart { color: #e25555; }
 
 @media (max-width: 720px) {
   .app { padding: 14px 16px 24px; gap: 18px; }
