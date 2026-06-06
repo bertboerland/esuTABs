@@ -254,6 +254,20 @@ body {
   color: var(--text-2);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rss-logo { display: inline-flex; align-items: center; color: var(--accent); }
+.suse-logo {
+  background: #30BA78;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  line-height: 1;
 }
 .rss-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
 .rss-list li {
@@ -268,16 +282,25 @@ body {
 .rss-list .meta { display: block; color: var(--text-2); font-size: 11px; margin-top: 1px; }
 .rss-list .skeleton { color: var(--text-2); }
 
-/* Footer — two lines */
+/* Footer — single line */
 .footer {
   text-align: center;
   color: var(--text-2);
   font-size: 12px;
   margin-top: 12px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .footer p { margin: 2px 0; }
-.footer .muted { opacity: 0.85; }
+.footer a {
+  color: var(--text-2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.footer a:hover { color: var(--accent); }
+.footer a svg { opacity: 0.85; }
 .footer .heart { color: var(--accent); }
 .footer a { color: var(--text-2); text-decoration: none; }
 .footer a:hover { color: var(--accent); }
