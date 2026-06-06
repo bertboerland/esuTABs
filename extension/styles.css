@@ -259,16 +259,8 @@ body {
   gap: 6px;
 }
 .rss-logo { display: inline-flex; align-items: center; color: var(--accent); }
-.suse-logo {
-  background: #30BA78;
-  color: #FFFFFF;
-  font-size: 9px;
-  font-weight: 800;
-  padding: 2px 4px;
-  border-radius: 3px;
-  letter-spacing: 0.04em;
-  line-height: 1;
-}
+.rss-logo-img { display: inline-block; vertical-align: middle; object-fit: contain; height: 18px; width: auto; }
+.rss-logo-img.suse { height: 16px; }
 .rss-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; }
 .rss-list li {
   padding: 5px 0;
