@@ -175,9 +175,11 @@
 
   function pickRandom(list) { return list[Math.floor(Math.random() * list.length)]; }
   function todayKey() { return ymd(new Date()); }
+  function todayMmDd() { const d = new Date(); return `${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
   function todayHistoryFact(history) {
-    const key = todayKey();
-    const m = history.find(h => h.date === key);
+    const full = todayKey();
+    const md = todayMmDd();
+    const m = history.find(h => h.date === full || h.date === md);
     if (!m) return null;
     return { title: m.title, description: m.description, category: 'This Day in Open Source History' };
   }
