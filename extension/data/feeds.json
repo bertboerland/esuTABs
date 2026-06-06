@@ -1,0 +1,14 @@
+{
+  "rss_open_source": [
+    "https://www.linuxfoundation.org/feed/",
+    "https://www.cncf.io/feed/",
+    "https://www.openssf.org/feed/",
+    "https://fedoramagazine.org/feed/",
+    "https://kde.org/announcements/rss.xml",
+    "https://planet.gnome.org/rss20.xml"
+  ],
+  "rss_suse": [
+    "https://www.suse.com/c/feed/",
+    "https://www.suse.com/news/feed/"
+  ]
+}
